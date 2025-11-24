@@ -1,0 +1,25 @@
+#!/command/with-contenv sh
+
+TIMESTAMP_FILE=/etc/init_useradd
+if [ -e $TIMESTAMP_FILE ]; then
+    exit 0
+fi
+touch $TIMESTAMP_FILE
+
+
+if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "TRUE" ] || [ "$DEBUG" = "true" ]; then
+    minijinja-cli /etc/templates/useradd.sh.j2 \
+        -D DEBUG="${DEBUG}"   \
+        -D INIT_GROUPS:="${INIT_GROUPS}"   \
+        -D INIT_USERS:="${INIT_USERS}"   \
+        -D INIT_CREATE_DIRS:="${INIT_CREATE_DIRS}" \
+        | tee | bash -
+else
+    minijinja-cli /etc/templates/useradd.sh.j2 \
+        -D DEBUG="${DEBUG}"   \
+        -D INIT_GROUPS:="${INIT_GROUPS}"   \
+        -D INIT_USERS:="${INIT_USERS}"   \
+        -D INIT_CREATE_DIRS:="${INIT_CREATE_DIRS}" \
+        | bash -
+fi
+

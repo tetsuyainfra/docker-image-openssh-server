@@ -1,0 +1,10 @@
+#!/command/execlineb -P
+# フォアグラウンドで sshd を exec
+
+foreground { ssh-keygen -A }
+# foreground { s6-mkdir -p -m 750 /var/run/sshd }
+
+# # Redirect stderr to stdout.
+fdmove -c 2 1
+
+/usr/sbin/sshd -D -e

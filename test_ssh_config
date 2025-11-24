@@ -1,0 +1,7 @@
+
+Host openssh-server-testing
+    HostName localhost
+    Port 2222
+    StrictHostKeyChecking no
+    UserKnownHostsFile ./test_known_hosts
+    IdentityAgent no

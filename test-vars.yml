@@ -1,0 +1,60 @@
+
+groups:
+  - name: example1
+    gid: 1000
+  - name: sftp
+    gid: 2000
+
+users:
+  - name: example1
+    password: password1
+    # authorized_keys:  # option
+    uid: 1000
+    gid: 1000
+    home: /home/example1
+    shell: /bin/bash  # option
+
+  - name: example2
+    password:
+    authorized_keys: |
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL3gIil65SEMMZGoLbyqG6owzEK6f3C/Us3XbMVoB06d example2@docker-image-openssh-server
+    uid: 1001
+    gid: 2000
+    home: /data/example2
+    shell: /bin/bash  # option
+
+create_dirs:
+  - path: "/chroot/example2"
+    owner: "root:root"
+    mode: "755"
+  - path: "/chroot/example2/data"
+    owner: "example2"
+    mode: "755"
+
+# BE CAREFULL: In yaml yes or no means true or false, you should use 'yes' or 'no' as string
+sshd_config:
+  Port: 2223
+  # address_family: any
+  ListenAddresses:
+    - "0.0.0.0"
+    - "::"
+  SyslogFacility: AUTH
+  LogLevel: DEBUG
+  PermitRootLogin: 'no' # or yes, without-password, forced-commands-only
+  PasswordAuthentication: 'yes'
+  # UsePAM: 'no'
+  UsePAM: 'yes'
+  AllowAgentForwarding: 'no'
+  AllowTcpForwarding: 'no'
+  Subsystems:
+    # - 'sftp  /usr/lib/openssh/sftp-server'
+    - 'sftp    internal-sftp'
+
+  AdditionalText: |
+    # something you want to write
+    # here
+    Match Group sftp
+       # %h: home dir path, %u username, %% escaped %
+       ChrootDirectory /chroot/%u
+       ForceCommand internal-sftp
+       AllowGroups sftp

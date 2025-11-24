@@ -1,0 +1,26 @@
+#!/command/with-contenv sh
+
+TIMESTAMP_FILE=/etc/init_sshd_config
+if [ -e $TIMESTAMP_FILE ]; then
+    exit 0
+fi
+touch $TIMESTAMP_FILE
+
+
+if [ ! -d /etc/ssh  ]; then
+    mkdir -p /etc/ssh
+    chmod 755 /etc/ssh
+fi
+
+
+if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "TRUE" ] || [ "$DEBUG" = "true" ]; then
+    minijinja-cli /etc/templates/sshd_config.j2 \
+        -D DEBUG="${DEBUG}"   \
+        -D INIT_SSHD_CONFIG:="${INIT_SSHD_CONFIG}" \
+        | tee /etc/ssh/sshd_config
+else
+    minijinja-cli /etc/templates/sshd_config.j2 \
+        -D DEBUG="${DEBUG}"   \
+        -D INIT_SSHD_CONFIG:="${INIT_SSHD_CONFIG}" \
+        >  /etc/ssh/sshd_config
+fi

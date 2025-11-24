@@ -1,0 +1,5 @@
+#!/command/with-contenv sh
+
+env
+
+find /etc/services.d -type f -exec ls -l {} +

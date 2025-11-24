@@ -1,0 +1,51 @@
+
+{%- if DEBUG in ['1', 'TRUE', 'true'] %}
+echo 'DEBUG       : {{ DEBUG }}'
+echo 'INIT_GROUPS : {{ INIT_GROUPS }}'
+echo 'INIT_USERS  : {{ INIT_USERS }}'
+set -x
+{% endif %}
+
+
+{% for group in INIT_GROUPS  %}
+groupadd --gid {{ group.gid }} {{ group.name }}
+{% endfor %}
+
+
+{% for user in INIT_USERS  %}
+# {{ user.name }}
+useradd \
+    --uid {{ user.uid }}  \
+    --gid {{ user.gid }} \
+    --create-home \
+    --home-dir {{ user.home }} \
+    --shell {{ user.shell | default('/sbin/nologin') }} \
+    --skel "" \
+    {{ user.name }}
+
+{# none値の扱いに要注意 #}
+{% if (user.password is defined) and ((user.password or "") | length > 0) %}
+echo '{{ user.password }}' | passwd --stdin {{ user.name }}
+{% else %}
+# only useradd, account is locked. we should this carefully.
+passwd -u {{ user.name }}
+{% endif %}
+
+{% if user.authorized_keys %}
+mkdir {{ user.home }}/.ssh
+cat <<EOF > {{ user.home }}/.ssh/authorized_keys
+{{ user.authorized_keys }}
+EOF
+chown {{user.uid}}:{{user.gid}} {{ user.home }}/.ssh
+chmod 700 {{ user.home }}/.ssh
+chmod 644 {{ user.home }}/.ssh/authorized_keys
+{% endif %}
+
+{% endfor %}
+
+
+{% for d in INIT_CREATE_DIRS %}
+mkdir -p {{ d.path }}
+chown {{ d.owner }} {{ d.path }}
+chmod {{ d.mode }}  {{ d.path }}
+{% endfor %}
