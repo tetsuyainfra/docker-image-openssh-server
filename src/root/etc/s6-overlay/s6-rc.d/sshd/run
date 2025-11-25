@@ -1,10 +1,14 @@
 #!/command/execlineb -P
 # フォアグラウンドで sshd を exec
+importas DEBUG DEBUG
+
+define -s SSHD_RUN     "/usr/sbin/sshd -D -e"
+define -s SSHD_RUN_D   "/usr/sbin/sshd -D -e -d"
 
 foreground { ssh-keygen -A }
-# foreground { s6-mkdir -p -m 750 /var/run/sshd }
 
 # # Redirect stderr to stdout.
 fdmove -c 2 1
 
-/usr/sbin/sshd -D -e
+$SSHD_RUN
+# $SSHD_RUN_D
