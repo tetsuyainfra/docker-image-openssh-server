@@ -1,4 +1,11 @@
-#!/command/with-contenv sh
+#!/command/with-contenv bash
+
+if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "TRUE" ] || [ "$DEBUG" = "true" ]; then
+    DEBUG_ON=1
+    set -x
+else
+    DEBUG_ON=0
+fi
 
 TIMESTAMP_FILE=/etc/init_useradd
 if [ -e $TIMESTAMP_FILE ]; then
@@ -6,20 +13,61 @@ if [ -e $TIMESTAMP_FILE ]; then
 fi
 touch $TIMESTAMP_FILE
 
+CMD=(minijinja-cli -D DEBUG="${DEBUG}")
 
-
-if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "TRUE" ] || [ "$DEBUG" = "true" ]; then
-    minijinja-cli /etc/templates/useradd.sh.j2 \
-        -D DEBUG="${DEBUG}"   \
-        -D groups:="${INIT_GROUPS}"   \
-        -D users:="${INIT_USERS}"   \
-        -D create_dirs:="${INIT_CREATE_DIRS}" \
-        | tee | bash -
+if [ -n "${INIT_CONFIG:-}" ]; then
+    if [ -f "${INIT_CONFIG}" ]; then
+        CMD+=("/etc/templates/useradd.sh.j2" "${INIT_CONFIG}")
+    else
+        echo "WARNING: INIT_CONFIG is set but the file does not exist: ${INIT_CONFIG}"
+        exit 1
+    fi
 else
-    minijinja-cli /etc/templates/useradd.sh.j2 \
-        -D groups:="${INIT_GROUPS}"   \
-        -D users:="${INIT_USERS}"   \
-        -D create_dirs:="${INIT_CREATE_DIRS}" \
-        | bash -
+    CMD+=(-D groups:="${INIT_GROUPS}"
+        -D users:="${INIT_USERS}"
+        -D create_dirs:="${INIT_CREATE_DIRS}"
+        "/etc/templates/useradd.sh.j2" )
 fi
+
+if [ "$DEBUG_ON" -eq 1 ]; then
+    "${CMD[@]}" | tee | bash -
+else
+    "${CMD[@]}" | bash -
+fi
+
+
+# if [ -n "${INIT_CONFIG}" ]; then
+#     if [ -f "${INIT_CONFIG}" ]; then
+#         minijinja-cli \
+#             -D DEBUG="${DEBUG}" \
+#             /etc/templates/useradd.sh.j2 \
+#             ${INIT_CONFIG} | $OUTPUT
+#     else
+#         echo "WARNING: INIT_CONFIG is set but the file does not exist: ${INIT_CONFIG}"
+#         exit 1
+#     fi
+# else
+#     minijinja-cli \
+#         -D DEBUG="${DEBUG}" \
+#         -D groups:="${INIT_GROUPS}"   \
+#         -D users:="${INIT_USERS}"   \
+#         -D create_dirs:="${INIT_CREATE_DIRS}" \
+#         /etc/templates/useradd.sh.j2 \
+#         | $OUTPUT
+# fi
+
+# if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "TRUE" ] || [ "$DEBUG" = "true" ]; then
+#     minijinja-cli /etc/templates/useradd.sh.j2 \
+#         -D DEBUG="${DEBUG}"   \
+#         -D groups:="${INIT_GROUPS}"   \
+#         -D users:="${INIT_USERS}"   \
+#         -D create_dirs:="${INIT_CREATE_DIRS}" \
+#         | tee | bash -
+# else
+#     minijinja-cli /etc/templates/useradd.sh.j2 \
+#         -D groups:="${INIT_GROUPS}"   \
+#         -D users:="${INIT_USERS}"   \
+#         -D create_dirs:="${INIT_CREATE_DIRS}" \
+#         | bash -
+# fi
 
