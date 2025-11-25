@@ -1,24 +1,28 @@
+# HOW TO USE
+SEE [Makefile run](Makefile#46), [Makefile run2](Makefile#57)
+or [test.sh](test.sh#25)
 
+# HOW TO TEST
+```make test```
 
-# Logging
+# 動作について
+- 02-useradd : /etc/init_useradd をチェックして2度目の実行を予防している
+- 03-sshd_config : /etc/init_sshd_configをチェックして2度目の実行を予防している
+- 変数 INIT_CONFIGで設定ファイルへのパスを与えると、DEBUG以外の変数を読み込まずにサービスが起動する
+  - INIT_CONFIGを設定しなければ、INIT_GROUPS, INIT_USERS, INIT_CREATE_DIRS, INIT_SSHD_CONFIGの変数を読み込みサービスが起動される 
+
+# MEMO
+service
+- s6-overlayを使う
+  - ログの出力先をsyslogdにしてもいいかもしれない
+  - fail2banが欲しいかも？
+Logging
 - sshdはsyslog()にログを出力している
   - このイメージではsystemd(journald)/syslogdを入れていない
-  - そのため sshd -e オプションで stderr に出力している
+  - そのため sshd -e オプションで stderr に出力している(s6-overlayの機能でstdioにフォワード)
     - -D は foregroudでの実行
 
-
-
-
-/etc/runit/{1..3} またはランレベル /etc/runit/runsvdir/*
-
-/etc/runit/ctrlaltdel
-/etc/runit/2
-/etc/runit/3
-
-
-
-https://smarden.org/runit/
-
-https://tracker.debian.org/pkg/runit
-
-https://sources.debian.org/src/runit/2.2.0-6/runit-2.2.0/src/runit-init.cA
+# TODO
+- [ ] github actionsに対応させる
+- [ ] もう少しドキュメントを充実させる
+- [ ] たまにmake runでビルドに失敗する理由を見つける
