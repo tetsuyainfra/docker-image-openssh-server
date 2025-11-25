@@ -7,19 +7,19 @@ fi
 touch $TIMESTAMP_FILE
 
 
+
 if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "TRUE" ] || [ "$DEBUG" = "true" ]; then
     minijinja-cli /etc/templates/useradd.sh.j2 \
         -D DEBUG="${DEBUG}"   \
-        -D INIT_GROUPS:="${INIT_GROUPS}"   \
-        -D INIT_USERS:="${INIT_USERS}"   \
-        -D INIT_CREATE_DIRS:="${INIT_CREATE_DIRS}" \
+        -D groups:="${INIT_GROUPS}"   \
+        -D users:="${INIT_USERS}"   \
+        -D create_dirs:="${INIT_CREATE_DIRS}" \
         | tee | bash -
 else
     minijinja-cli /etc/templates/useradd.sh.j2 \
-        -D DEBUG="${DEBUG}"   \
-        -D INIT_GROUPS:="${INIT_GROUPS}"   \
-        -D INIT_USERS:="${INIT_USERS}"   \
-        -D INIT_CREATE_DIRS:="${INIT_CREATE_DIRS}" \
+        -D groups:="${INIT_GROUPS}"   \
+        -D users:="${INIT_USERS}"   \
+        -D create_dirs:="${INIT_CREATE_DIRS}" \
         | bash -
 fi
 

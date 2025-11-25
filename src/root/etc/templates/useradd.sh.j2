@@ -1,18 +1,20 @@
 
 {%- if DEBUG in ['1', 'TRUE', 'true'] %}
 echo 'DEBUG       : {{ DEBUG }}'
-echo 'INIT_GROUPS : {{ INIT_GROUPS }}'
-echo 'INIT_USERS  : {{ INIT_USERS }}'
+echo 'groups : {{ groups }}'
+echo 'users  : {{ users }}'
 set -x
-{% endif %}
+{%- endif %}
 
 
-{% for group in INIT_GROUPS  %}
+# GROUPS
+{%- for group in groups  %}
 groupadd --gid {{ group.gid }} {{ group.name }}
-{% endfor %}
+{%- endfor %}
 
 
-{% for user in INIT_USERS  %}
+# USERS
+{%- for user in users  %}
 # {{ user.name }}
 useradd \
     --uid {{ user.uid }}  \
@@ -24,14 +26,14 @@ useradd \
     {{ user.name }}
 
 {# none値の扱いに要注意 #}
-{% if (user.password is defined) and ((user.password or "") | length > 0) %}
+{%- if (user.password is defined) and ((user.password or "") | length > 0) %}
 echo '{{ user.password }}' | passwd --stdin {{ user.name }}
-{% else %}
+{%- else %}
 # only useradd, account is locked. we should this carefully.
 passwd -u {{ user.name }}
-{% endif %}
+{%- endif %}
 
-{% if user.authorized_keys %}
+{%- if user.authorized_keys %}
 mkdir {{ user.home }}/.ssh
 cat <<EOF > {{ user.home }}/.ssh/authorized_keys
 {{ user.authorized_keys }}
@@ -39,13 +41,13 @@ EOF
 chown {{user.uid}}:{{user.gid}} {{ user.home }}/.ssh
 chmod 700 {{ user.home }}/.ssh
 chmod 644 {{ user.home }}/.ssh/authorized_keys
-{% endif %}
+{%- endif %}
+{%- endfor %}
 
-{% endfor %}
 
-
-{% for d in INIT_CREATE_DIRS %}
+# CREATE_DIRS
+{%- for d in create_dirs %}
 mkdir -p {{ d.path }}
 chown {{ d.owner }} {{ d.path }}
 chmod {{ d.mode }}  {{ d.path }}
-{% endfor %}
+{%- endfor %}

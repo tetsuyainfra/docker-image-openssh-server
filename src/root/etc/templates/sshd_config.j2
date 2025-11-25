@@ -10,7 +10,7 @@
 
 # Include /etc/ssh/sshd_config.d/*.conf
 
-{% set c = INIT_SSHD_CONFIG %}
+{% set c = sshd_config %}
 
 {%- if DEBUG in ['1', 'TRUE', 'true'] %}
 # DEBUG: {{ DEBUG }}
@@ -94,7 +94,7 @@ KbdInteractiveAuthentication no
 # If you just want the PAM account and session checks to run without
 # PAM authentication, then enable this but set PasswordAuthentication
 # and KbdInteractiveAuthentication to 'no'.
-UsePAM {{ c.UsePAM | default('no') }}
+UsePAM {{ c.UsePAM | default('yes') }}
 
 AllowAgentForwarding {{ c.AllowAgentForwarding | default('no') }}
 AllowTcpForwarding {{ c.AllowTcpForwarding | default('no') }}

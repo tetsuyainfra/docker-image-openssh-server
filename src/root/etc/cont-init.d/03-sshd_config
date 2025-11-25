@@ -16,11 +16,11 @@ fi
 if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "TRUE" ] || [ "$DEBUG" = "true" ]; then
     minijinja-cli /etc/templates/sshd_config.j2 \
         -D DEBUG="${DEBUG}"   \
-        -D INIT_SSHD_CONFIG:="${INIT_SSHD_CONFIG}" \
+        -D sshd_config:="${INIT_SSHD_CONFIG}" \
         | tee /etc/ssh/sshd_config
 else
     minijinja-cli /etc/templates/sshd_config.j2 \
         -D DEBUG="${DEBUG}"   \
-        -D INIT_SSHD_CONFIG:="${INIT_SSHD_CONFIG}" \
+        -D sshd_config:="${INIT_SSHD_CONFIG}" \
         >  /etc/ssh/sshd_config
 fi
