@@ -39,11 +39,10 @@ sshd_config:
     - "0.0.0.0"
     - "::"
   SyslogFacility: AUTH
-  LogLevel: DEBUG
+  LogLevel: INFO
+  # LogLevel: DEBUG
   PermitRootLogin: 'no' # or yes, without-password, forced-commands-only
   PasswordAuthentication: 'yes'
-  # UsePAM: 'no'
-  UsePAM: 'yes'
   AllowAgentForwarding: 'no'
   AllowTcpForwarding: 'no'
   Subsystems:
