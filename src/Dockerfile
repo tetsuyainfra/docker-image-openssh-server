@@ -9,7 +9,6 @@ ARG JINJA_VERSION=2.12.0
 ARG JINJA_NAME=minijinja-cli-x86_64-unknown-linux-gnu.tar.xz
 ARG JINJA_TEMPLATE_HASH="sha256:388a2442d013766fc9fafad339e60c6019389765895079dc04e1c35b6c3a417e"
 
-
 RUN set -eux; \
     env ; \
     apt-get update; \
@@ -18,14 +17,14 @@ RUN set -eux; \
             openssh-server xz-utils tzdata ; \
     DEBIAN_FRONTEND=noninteractive apt-get remove --purge --auto-remove -y; \
     rm -rf /var/lib/apt/lists/* ; \
-    # create manifest \
+    # Create manifest
     mkdir -p /usr/share/rocks ; \
-    # rm SSH HOST Public Key \
+    # Remoe SSH HOST Public Key
     mkdir -p /var/run/sshd ; \
     chmod 750 /var/run/sshd ; \
     rm -rf /etc/ssh/ssh_host_* ; \
     (dpkg-query -f '${binary:Package},${Version}\n' -W | sort) > /usr/share/rocks/packages.list ; \
-    # set locale
+    # Set locale
     # echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen ; \
     # locale-gen en_US ; \
     # update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 ; \
@@ -36,22 +35,17 @@ RUN set -eux; \
 
 VOLUME [ "/etc/ssh", "/chroot" ]
 
-# COPY root/ /
+# setup s6-overlay & jinja
+ADD --checksum=${JINJA_TEMPLATE_HASH} https://github.com/mitsuhiko/minijinja/releases/download/${JINJA_VERSION}/${JINJA_NAME} /tmp
+ADD --checksum=${S6_OVERLAY_NOARCH_HASH} https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
+ADD --checksum=${S6_OVERLAY_ARCH_HASH}  https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/${S6_OVERLAY_ARCH_NAME} /tmp
+RUN tar -C /usr/local/bin -Jxpf /tmp/${JINJA_NAME} --strip-components=1 ${JINJA_NAME%.tar.xz}/minijinja-cli ; \
+        tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz ; \
+        tar -C / -Jxpf /tmp/${S6_OVERLAY_ARCH_NAME}
 
+COPY root/ /
 
+ENTRYPOINT ["/init"]
 # -d : Debug mode 一度しか接続できないので注意
 # CMD ["/usr/sbin/sshd", "-D", "-e", "-d"]
 # CMD ["/usr/sbin/sshd", "-D", "-e"]
-
-
-ADD --checksum=${JINJA_TEMPLATE_HASH} https://github.com/mitsuhiko/minijinja/releases/download/${JINJA_VERSION}/${JINJA_NAME} /tmp
-RUN tar -C /usr/local/bin -Jxpf /tmp/${JINJA_NAME} --strip-components=1 ${JINJA_NAME%.tar.xz}/minijinja-cli
-
-ADD --checksum=${S6_OVERLAY_NOARCH_HASH} https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
-ADD --checksum=${S6_OVERLAY_ARCH_HASH}  https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/${S6_OVERLAY_ARCH_NAME} /tmp
-RUN tar -C / -Jxpf /tmp/${S6_OVERLAY_ARCH_NAME}
-
-ENTRYPOINT ["/init"]
-
-COPY root/ /
