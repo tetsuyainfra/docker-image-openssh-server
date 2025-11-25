@@ -2,4 +2,4 @@
 
 env
 
-find /etc/services.d -type f -exec ls -l {} +
+# find /etc/services.d -type f -exec ls -l {} +
