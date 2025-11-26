@@ -1,3 +1,7 @@
+# docker-image-openssh-server
+[![Docker](https://github.com/tetsuyainfra/docker-image-openssh-server/actions/workflows/docker.yml/badge.svg?branch=main)](https://github.com/tetsuyainfra/docker-image-openssh-server/actions/workflows/docker.yml)
+[![Docker Image Version](https://img.shields.io/docker/v/tetsuyainfra/openssh-server)](https://hub.docker.com/r/tetsuyainfra/openssh-server)
+
 # HOW TO USE
 SEE [Makefile run](Makefile#46), [Makefile run2](Makefile#57)
 or [test.sh](test.sh#25)
