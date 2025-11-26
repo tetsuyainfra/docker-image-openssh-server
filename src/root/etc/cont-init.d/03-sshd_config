@@ -1,4 +1,5 @@
 #!/command/with-contenv bash
+set -e
 TIMESTAMP_FILE=/config/init_sshd_config
 SSHD_CONFIG_PATH="/config/sshd_config"
 

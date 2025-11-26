@@ -30,10 +30,11 @@ RUN set -eux; \
     # update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 ; \
     # echo -n en_US.UTF-8 > /etc//LANG ; \
     # echo -n en_US.UTF-8 > /etc//LC_CTYPE ; \
-    mkdir /data ; \
+    mkdir /config ; \
+    mkdir /chroot ; \
     true
 
-VOLUME [ "/etc/ssh", "/chroot" ]
+VOLUME [ "/config", "/chroot" ]
 
 # setup s6-overlay & jinja
 ADD --checksum=${JINJA_TEMPLATE_HASH} https://github.com/mitsuhiko/minijinja/releases/download/${JINJA_VERSION}/${JINJA_NAME} /tmp

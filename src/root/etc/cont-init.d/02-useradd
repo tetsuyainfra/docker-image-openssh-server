@@ -1,4 +1,5 @@
 #!/command/with-contenv bash
+set -e
 TIMESTAMP_FILE=/config/init_useradd
 
 if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "TRUE" ] || [ "$DEBUG" = "true" ]; then

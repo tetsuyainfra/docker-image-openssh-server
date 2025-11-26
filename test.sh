@@ -15,7 +15,7 @@ else
 fi
 
 cleanup() {
-    echo "テストに使ったコンテナ削除します..."
+    echo "テストに使ったコンテナを削除します..."
 	docker stop $CONTAINER_NAME || true
 }
 trap cleanup EXIT
@@ -26,7 +26,7 @@ CONTAINER_NAME=$(docker run  \
 	--detach \
 	--rm \
 	-p 2222:$INIT_SSHD_PORT \
-	-e DEBUG=$DEBUG \
+	-e DEBUG=$DEBUG_ON \
 	-e INIT_GROUPS="$INIT_GROUPS" \
 	-e INIT_USERS="$INIT_USERS" \
 	-e INIT_SSHD_CONFIG="$INIT_SSHD_CONFIG" \
@@ -35,6 +35,25 @@ CONTAINER_NAME=$(docker run  \
 echo CONTAINER_NAME: $CONTAINER_NAME
 
 sleep 3
+
+{
+	echo TEST Check init_useradd, init_sshd_config created
+	docker exec $CONTAINER_NAME test -e /config
+	docker exec $CONTAINER_NAME test -e /config/init_useradd
+	docker exec $CONTAINER_NAME test -e /config/init_sshd_config
+}
+{
+	echo Ensure groups has been created
+	docker exec $CONTAINER_NAME cat /etc/group
+	docker exec $CONTAINER_NAME cat /etc/group | grep 'example1:x:1000:' > /dev/null
+	docker exec $CONTAINER_NAME cat /etc/group | grep 'sftp:x:2000:' > /dev/null
+}
+{
+	echo Ensure users has been created
+	# !以外ってことは2以上なのでパスワード設定済み
+	docker exec $CONTAINER_NAME cat /etc/shadow | grep 'example1:[^:]\{2,\}:' > /dev/null
+	docker exec $CONTAINER_NAME cat /etc/shadow | grep 'example2:\!:' > /dev/null
+}
 
 {
 	echo "Generating test_known_hosts"
@@ -78,5 +97,6 @@ sleep 3
 	  exit 1
 	fi
 }
+
 
 echo "###### All tests passed successfully. #######"
