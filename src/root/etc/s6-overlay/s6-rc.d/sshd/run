@@ -2,10 +2,8 @@
 # フォアグラウンドで sshd を exec
 importas DEBUG DEBUG
 
-define -s SSHD_RUN     "/usr/sbin/sshd -D -e"
-define -s SSHD_RUN_D   "/usr/sbin/sshd -D -e -d"
-
-foreground { ssh-keygen -A }
+define -s SSHD_RUN     "/usr/sbin/sshd -f /config/sshd_config -D -e"
+define -s SSHD_RUN_D   "/usr/sbin/sshd -f /config/sshd_config -D -e -d"
 
 # # Redirect stderr to stdout.
 fdmove -c 2 1

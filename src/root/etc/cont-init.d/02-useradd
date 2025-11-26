@@ -1,4 +1,5 @@
 #!/command/with-contenv bash
+TIMESTAMP_FILE=/config/init_useradd
 
 if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "TRUE" ] || [ "$DEBUG" = "true" ]; then
     DEBUG_ON=1
@@ -7,7 +8,6 @@ else
     DEBUG_ON=0
 fi
 
-TIMESTAMP_FILE=/etc/init_useradd
 if [ -e $TIMESTAMP_FILE ]; then
     exit 0
 fi

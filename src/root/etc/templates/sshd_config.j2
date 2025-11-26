@@ -29,6 +29,10 @@ ListenAddress {{ address }}
 #HostKey /etc/ssh/ssh_host_rsa_key
 #HostKey /etc/ssh/ssh_host_ecdsa_key
 #HostKey /etc/ssh/ssh_host_ed25519_key
+{% set defaultHostKeysPath = ['/config/ssh_host_rsa_key', '/config/ssh_host_ecdsa_key', '/config/ssh_host_ed25519_key'] %}
+{%- for hostkey in (c.HostKeys | default(defaultHostKeysPath))%}
+HostKey {{ hostkey }}
+{%- endfor %}
 
 # Ciphers and keying
 #RekeyLimit default none

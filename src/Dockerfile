@@ -22,7 +22,7 @@ RUN set -eux; \
     # Remoe SSH HOST Public Key
     mkdir -p /var/run/sshd ; \
     chmod 750 /var/run/sshd ; \
-    rm -rf /etc/ssh/ssh_host_* ; \
+    rm -rf /etc/ssh ; \
     (dpkg-query -f '${binary:Package},${Version}\n' -W | sort) > /usr/share/rocks/packages.list ; \
     # Set locale
     # echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen ; \
@@ -45,7 +45,8 @@ RUN tar -C /usr/local/bin -Jxpf /tmp/${JINJA_NAME} --strip-components=1 ${JINJA_
 
 COPY root/ /
 
-ENTRYPOINT ["/init"]
 # -d : Debug mode 一度しか接続できないので注意
 # CMD ["/usr/sbin/sshd", "-D", "-e", "-d"]
-# CMD ["/usr/sbin/sshd", "-D", "-e"]
+# CMD ["/usr/sbin/sshd", "-f", "/config/sshd_config", "-D", "-e", "-d"] # デバッグモード
+# CMD ["/usr/sbin/sshd", "-f", "/config/sshd_config", "-D", "-e"]
+ENTRYPOINT ["/init"]

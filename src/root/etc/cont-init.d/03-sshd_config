@@ -1,4 +1,6 @@
 #!/command/with-contenv bash
+TIMESTAMP_FILE=/config/init_sshd_config
+SSHD_CONFIG_PATH="/config/sshd_config"
 
 if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "TRUE" ] || [ "$DEBUG" = "true" ]; then
     DEBUG_ON=1
@@ -7,17 +9,27 @@ else
     DEBUG_ON=0
 fi
 
-TIMESTAMP_FILE=/etc/init_sshd_config
 if [ -e $TIMESTAMP_FILE ]; then
     exit 0
 fi
 touch $TIMESTAMP_FILE
 
-
-if [ ! -d /etc/ssh  ]; then
-    mkdir -p /etc/ssh
-    chmod 755 /etc/ssh
+# Make sure /config directory exists
+if [ ! -d /config  ]; then
+    mkdir -p /config
 fi
+chmod 755 /config
+
+#  Generate host keys if they do not exist
+for t in rsa ecdsa ed25519; do
+    key="/config/ssh_host_${t}_key"
+    if [ ! -f "$key" ]; then
+        ssh-keygen -t "$t" -f "$key" -N '' -q || exit $?
+        chmod 600 "$key"
+        [ -f "${key}.pub" ] && chmod 644 "${key}.pub"
+    fi
+done
+
 
 CMD=(minijinja-cli -D DEBUG="${DEBUG}")
 
@@ -33,9 +45,9 @@ else
 fi
 
 if [ "$DEBUG_ON" -eq 1 ]; then
-    "${CMD[@]}" | tee /etc/ssh/sshd_config
+    "${CMD[@]}" | tee $SSHD_CONFIG_PATH
 else
-    "${CMD[@]}" > /etc/ssh/sshd_config
+    "${CMD[@]}" > $SSHD_CONFIG_PATH
 fi
 
 # if [ -n "${INIT_CONFIG}" ]; then
