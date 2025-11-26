@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "**/s6-rc.d/*/run": "shellscript",
+        "**/s6-rc.d/*/type": "shellscript",
+        "**/s6-rc.d/*/finish": "shellscript"
+    }
+}
