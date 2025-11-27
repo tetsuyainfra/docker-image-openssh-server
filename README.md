@@ -30,3 +30,7 @@ Logging
 - [ ] github actionsに対応させる
 - [ ] もう少しドキュメントを充実させる
 - [ ] たまにmake runでビルドに失敗する理由を見つける
+- [ ] RUN  --mount=type=cache,target=/var/cache/apt,sharing=locked してbuildキャッシュさせる
+  - [ ] /etc/apt/apt.conf.d/docker-clean を無効化(削除) する
+  - [ ] キャッシュ強制 echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+  - [ ] 
