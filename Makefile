@@ -4,7 +4,7 @@ include .env
 SRC_FILES := $(shell find src -type f)
 
 BUILD_TIMESTAMP_FILE := tmp/.build-timestamp
-BUILD_IMAGE_NAME := openssh-server:latest
+BUILD_IMAGE_NAME := tetsuyainfra/openssh-server:trixie-latest
 
 TEST_CONTAINER_NAME := ssh-server-testing
 
@@ -30,16 +30,13 @@ clean:
 # 		-exec echo {} +
 
 clean_cache: clean
+	docker image prune -f
 	docker builder prune -f
 
 
 build: $(BUILD_TIMESTAMP_FILE)
 $(BUILD_TIMESTAMP_FILE): $(SRC_FILES)
-	docker build \
-		--build-arg HTTP_PROXY=$(HTTP_PROXY) \
-		--build-arg HTTPS_PROXY=$(HTTPS_PROXY) \
-		-t $(BUILD_IMAGE_NAME) \
-		-f src/Dockerfile ./src
+	docker buildx bake --progress=plain
 	touch $@
 
 
@@ -70,7 +67,7 @@ vars:
 	@echo '$(TEST_INIT_CREATE_DIRS)'
 
 test: $(BUILD_TIMESTAMP_FILE)
-	./test.sh
+	IMAGE_NAME=$(BUILD_IMAGE_NAME) ./test.sh
 
 cp_ssh_config: $(BUILD_TIMESTAMP_FILE)
 	@./scripts/cp-image-file.sh $(BUILD_IMAGE_NAME) /etc/ssh ./tmp

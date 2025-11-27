@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BUILD_IMAGE_NAME="openssh-server:latest"
+IMAGE_NAME="${IMAGE_NAME:-tetsuyainfra/openssh-server:trixie-latest}"
 INIT_GROUPS=$(yq -c .groups test-vars.yml)
 INIT_USERS=$(yq -c .users test-vars.yml)
 INIT_CREATE_DIRS=$(yq -c '.create_dirs' test-vars.yml)
@@ -31,7 +31,8 @@ CONTAINER_NAME=$(docker run  \
 	-e INIT_USERS="$INIT_USERS" \
 	-e INIT_SSHD_CONFIG="$INIT_SSHD_CONFIG" \
 	-e INIT_CREATE_DIRS="$INIT_CREATE_DIRS" \
-	$BUILD_IMAGE_NAME)
+	$IMAGE_NAME)
+echo IMAGE_NAME: $IMAGE_NAME
 echo CONTAINER_NAME: $CONTAINER_NAME
 
 sleep 3
@@ -99,4 +100,6 @@ sleep 3
 }
 
 
+echo ""
 echo "###### All tests passed successfully. #######"
+echo ""
