@@ -28,6 +28,7 @@ FROM debian:trixie-slim
 RUN  --mount=type=cache,target=/var/cache/apt,sharing=locked \
     set -eux; \
     env ; \
+    rm /etc/apt/apt.conf.d/docker-clean ; \
     apt-get update; \
     DEBIAN_FRONTEND=noninteractive apt-get full-upgrade -y; \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
