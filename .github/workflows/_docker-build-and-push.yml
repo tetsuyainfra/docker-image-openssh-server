@@ -19,6 +19,9 @@ on:
       target:
         required: true
         type: string
+      build_timestamp:
+        required: true
+        type: string
     #
     outputs:
       digest:
@@ -56,12 +59,15 @@ jobs:
       - name: Docker Buildx Bake
         env:
           is_push: ${{ github.event_name != 'pull_request' && (github.ref == 'refs/heads/main') }}
+          BUILD_TIMESTAMP: ${{ inputs.build_timestamp }}
         uses: docker/bake-action@v6.9.0
         id: bake
         with:
           push: ${{ env.is_push }}
           files: docker-bake.hcl
           targets: ${{ inputs.target }}
+          set: |
+            target.${{ inputs.target }}.build-args.CRON_BUILDTIME='${{ inputs.build_timestamp }}'
 
       - name: Print digest
         id: print-digest

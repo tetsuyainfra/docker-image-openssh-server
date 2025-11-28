@@ -10,6 +10,7 @@ variable "HTTPS_PROXY" {
 }
 
 variable "CRON_BUILDTIME" {
+    description = "Build timestamp in seconds since epoch TO BE USED IN Dockerfile ONLY to set the cron build time to avoid cache issues"
     type    = string
     default = null
 }
@@ -20,6 +21,7 @@ variable "TAG" {
 }
 
 variable "BUILD_TIMESTAMP" {
+    description = "Build timestamp in seconds since epoch TO BE USED IN THE TAG GENERATION ONLY"
     type    = string
     default = "${ timestamp() }"
 }
