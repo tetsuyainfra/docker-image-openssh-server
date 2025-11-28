@@ -21,29 +21,31 @@ ADD --checksum=${JINJA_HASH} https://github.com/mitsuhiko/minijinja/releases/dow
 RUN mkdir -p /rootfs/usr/local/bin
 RUN tar -C /rootfs/usr/local/bin -Jxpf /tmp/${JINJA_NAME} --strip-components=1 ${JINJA_NAME%.tar.xz}/minijinja-cli
 
-
 # Main stage
 FROM debian:trixie-slim
 
-RUN  --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    set -eux; \
-    env ; \
-    rm /etc/apt/apt.conf.d/docker-clean ; \
-    apt-get update; \
-    DEBIAN_FRONTEND=noninteractive apt-get full-upgrade -y; \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            openssh-server xz-utils tzdata ; \
-    DEBIAN_FRONTEND=noninteractive apt-get remove --purge --auto-remove -y; \
-    # Create manifest
-    mkdir -p /usr/share/rocks ; \
-    # Remoe SSH HOST Public Key
-    mkdir -p /var/run/sshd ; \
-    chmod 750 /var/run/sshd ; \
-    rm -rf /etc/ssh ; \
-    (dpkg-query -f '${binary:Package},${Version}\n' -W | sort) > /usr/share/rocks/packages.list ; \
-    mkdir /config ; \
-    mkdir /chroot ; \
-    true
+RUN  --mount=type=cache,target=/var/cache/apt,sharing=locked  <<EOF
+set -eux
+env
+# apt-get clean が動作しないようにする
+rm /etc/apt/apt.conf.d/docker-clean
+# キャッシュの保持を強制
+echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get full-upgrade -y
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        openssh-server xz-utils tzdata
+DEBIAN_FRONTEND=noninteractive apt-get remove --purge --auto-remove -y
+# Create manifest
+mkdir -p /usr/share/rocks
+# Remoe SSH HOST Public Key
+mkdir -p /var/run/sshd
+chmod 750 /var/run/sshd
+rm -rf /etc/ssh
+(dpkg-query -f '${binary:Package},${Version}\n' -W | sort) > /usr/share/rocks/packages.list
+mkdir /config
+mkdir /chroot
+EOF
 
 VOLUME [ "/config", "/chroot" ]
 
