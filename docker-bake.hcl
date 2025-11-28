@@ -67,8 +67,8 @@ target "amd64" {
     platforms = ["linux/amd64"]
     tags = [
         "tetsuyainfra/openssh-server:trixie-latest",
-        "tetsuyainfra/openssh-server:trixie-latest-amd64",
-        "tetsuyainfra/openssh-server:trixie-${BUILD_DATETIME}-amd64"
+        "tetsuyainfra/openssh-server:trixie-amd64-latest",
+        "tetsuyainfra/openssh-server:trixie-amd64-${BUILD_DATETIME}"
     ]
     args = {
         S6_OVERLAY_ARCH_NAME="s6-overlay-x86_64.tar.xz"
@@ -84,8 +84,8 @@ target "arm64" {
     platforms = ["linux/arm64"]
     tags = [
         "tetsuyainfra/openssh-server:trixie-latest",
-        "tetsuyainfra/openssh-server:trixie-latest-arm64",
-        "tetsuyainfra/openssh-server:trixie-${BUILD_DATETIME}-arm64"
+        "tetsuyainfra/openssh-server:trixie-arm64-latest",
+        "tetsuyainfra/openssh-server:trixie-arm64-${BUILD_DATETIME}"
     ]
     args = {
         S6_OVERLAY_ARCH_NAME="s6-overlay-aarch64.tar.xz"
