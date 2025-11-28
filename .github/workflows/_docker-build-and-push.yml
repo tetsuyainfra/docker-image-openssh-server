@@ -72,7 +72,7 @@ jobs:
           set: |
             *.args.CRON_BUILDTIME='${{ inputs.build_timestamp }}'
             *.cache-from=type=gha,scope=${{ env.ESCAPED_REF_NAME }}-${{ inputs.target }}
-            *.cache-to=type=gha,mode=max,scope=${{ env.ESCAPED_REF_NAME }}- ${{ inputs.target }}
+            *.cache-to=type=gha,mode=max,scope=${{ env.ESCAPED_REF_NAME }}-${{ inputs.target }}
 
 
       - name: Print digest
