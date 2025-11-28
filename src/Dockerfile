@@ -1,3 +1,4 @@
+########################################################################################################################
 # build stage
 FROM busybox:1 AS buildstage
 ARG S6_OVERLAY_VERSION
@@ -21,6 +22,7 @@ ADD --checksum=${JINJA_HASH} https://github.com/mitsuhiko/minijinja/releases/dow
 RUN mkdir -p /rootfs/usr/local/bin
 RUN tar -C /rootfs/usr/local/bin -Jxpf /tmp/${JINJA_NAME} --strip-components=1 ${JINJA_NAME%.tar.xz}/minijinja-cli
 
+########################################################################################################################
 # Main stage
 FROM debian:trixie-slim
 
