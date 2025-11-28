@@ -33,7 +33,7 @@ jobs:
 
   build-amd64:
     needs: [setup]
-    uses: ./.github/workflows/docker-build-and-push.yml
+    uses: ./.github/workflows/_docker-build-and-push.yml
     secrets:
       USERNAME: ${{ secrets.DOCKER_USERNAME }}
       PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -44,7 +44,7 @@ jobs:
 
   build-arm64:
     needs: [setup]
-    uses: ./.github/workflows/docker-build-and-push.yml
+    uses: ./.github/workflows/_docker-build-and-push.yml
     secrets:
       USERNAME: ${{ secrets.DOCKER_USERNAME }}
       PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
