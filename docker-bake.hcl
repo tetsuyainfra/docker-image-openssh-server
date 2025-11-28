@@ -9,6 +9,11 @@ variable "HTTPS_PROXY" {
     default = null
 }
 
+variable "CRON_BUILDTIME" {
+    type    = string
+    default = null
+}
+
 variable "TAG" {
     type    = string
     default = null
@@ -43,6 +48,8 @@ target "_common" {
     args = {
         HTTP_PROXY = HTTP_PROXY
         HTTPS_PROXY = HTTPS_PROXY
+
+        CRON_BUILDTIME = CRON_BUILDTIME
 
         S6_OVERLAY_VERSION = "3.2.1.0"
         S6_OVERLAY_NOARCH_NAME = "s6-overlay-noarch.tar.xz"

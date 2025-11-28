@@ -25,10 +25,13 @@ RUN tar -C /rootfs/usr/local/bin -Jxpf /tmp/${JINJA_NAME} --strip-components=1 $
 ########################################################################################################################
 # Main stage
 FROM debian:trixie-slim
+ARG CRON_BUILDTIME=no
 
 RUN  --mount=type=cache,target=/var/cache/apt,sharing=locked \
      --mount=type=cache,target=/var/lib/apt,sharing=locked  <<EOF
 set -eux
+# cronで実行している時間を受け取り、RUN内で呼び出すことでキャッシュが確実に効かないようにする
+echo "CRON_BUILDTIME: ${CRON_BUILDTIME}"
 env
 # apt-get clean が動作しないようにする
 rm /etc/apt/apt.conf.d/docker-clean
