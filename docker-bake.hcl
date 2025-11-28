@@ -15,29 +15,29 @@ variable "TAG" {
 }
 
 variable "BUILD_TIMESTAMP" {
+    type    = string
     default = "${ timestamp() }"
 }
 
-variable "BUILD_DATE" {
-    type    = string
-    default = "${formatdate("YYYYMMDD", BUILD_TIMESTAMP)}"
-}
 variable "BUILD_DATETIME" {
     type    = string
     default = "${formatdate("YYYYMMDD_HHMMss", BUILD_TIMESTAMP)}"
 }
 
 group "default" {
+    targets = ["amd64"]
+}
+
+group "all" {
     targets = ["amd64", "arm64"]
 }
 
 
-target "common" {
+target "_common" {
     context = "./src"
     dockerfile = "Dockerfile"
     tags = [
             "tetsuyainfra/openssh-server:trixie-latest",
-            "tetsuyainfra/openssh-server:trixie-${BUILD_DATE}",
             "tetsuyainfra/openssh-server:trixie-${BUILD_DATETIME}"
     ]
     args = {
@@ -54,8 +54,13 @@ target "common" {
 }
 
 target "amd64" {
-    inherits = ["common"]
+    inherits = ["_common"]
     platforms = ["linux/amd64"]
+    tags = [
+        "tetsuyainfra/openssh-server:trixie-latest",
+        "tetsuyainfra/openssh-server:trixie-latest-amd64",
+        "tetsuyainfra/openssh-server:trixie-${BUILD_DATETIME}-amd64"
+    ]
     args = {
         S6_OVERLAY_ARCH_NAME="s6-overlay-x86_64.tar.xz"
         S6_OVERLAY_ARCH_HASH="sha256:8bcbc2cada58426f976b159dcc4e06cbb1454d5f39252b3bb0c778ccf71c9435"
@@ -66,8 +71,13 @@ target "amd64" {
 }
 
 target "arm64" {
-    inherits = ["common"]
+    inherits = ["_common"]
     platforms = ["linux/arm64"]
+    tags = [
+        "tetsuyainfra/openssh-server:trixie-latest",
+        "tetsuyainfra/openssh-server:trixie-latest-arm64",
+        "tetsuyainfra/openssh-server:trixie-${BUILD_DATETIME}-arm64"
+    ]
     args = {
         S6_OVERLAY_ARCH_NAME="s6-overlay-aarch64.tar.xz"
         S6_OVERLAY_ARCH_HASH="sha256:c8fd6b1f0380d399422fc986a1e6799f6a287e2cfa24813ad0b6a4fb4fa755cc"
