@@ -25,14 +25,14 @@ RUN tar -C /rootfs/usr/local/bin -Jxpf /tmp/${JINJA_NAME} --strip-components=1 $
 # Main stage
 FROM debian:trixie-slim
 
-RUN set -eux; \
+RUN  --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    set -eux; \
     env ; \
     apt-get update; \
     DEBIAN_FRONTEND=noninteractive apt-get full-upgrade -y; \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             openssh-server xz-utils tzdata ; \
     DEBIAN_FRONTEND=noninteractive apt-get remove --purge --auto-remove -y; \
-    rm -rf /var/lib/apt/lists/* ; \
     # Create manifest
     mkdir -p /usr/share/rocks ; \
     # Remoe SSH HOST Public Key
