@@ -29,6 +29,7 @@ Logging
 
 # TODO
 - [ ] portainerなんかでpull-rebuildさせた時、/etc/\[shadow|group\]が無くなるのでinit_useraddなどのタイムスタンプファイルを/直下に置くことにする
+  - [ ] group, userの簡易存在チェックをするのでいいのでは？
 - [ ] github actionsに対応させる
   - [x] branch=main以外はbuildだけにする
   - [x] 不要なTAGを削除するワークフローを作る -> やらなくてよくないか説でてきた
