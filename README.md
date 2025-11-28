@@ -34,8 +34,8 @@ Logging
   - [x] 不要なTAGを削除するワークフローを作る -> やらなくてよくないか説でてきた
   - [ ] 不要なcacheを削除するワークフローを作る
 - [ ] たまにmake runでビルドに失敗する理由を見つける -> わからん
-- [ ] RUN  --mount=type=cache,target=/var/cache/apt,sharing=locked してbuildキャッシュさせる
-  - [ ] /etc/apt/apt.conf.d/docker-clean を無効化(削除) する
-  - [ ] キャッシュ強制 echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
-- [ ] variable "extra_tags" { default = [] }, tags = ["latest", ...var.extra_tags] をする
+- [x] RUN  --mount=type=cache,target=/var/cache/apt,sharing=locked してbuildキャッシュさせる
+  - [x] /etc/apt/apt.conf.d/docker-clean を無効化(削除) する
+  - [x] キャッシュ強制 echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+- [x] variable "extra_tags" { default = [] }, tags = ["latest", ...var.extra_tags] をする → いらない
 - [ ] もう少しドキュメントを充実させる
