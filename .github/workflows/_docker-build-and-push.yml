@@ -38,9 +38,11 @@ jobs:
       digest: ${{ steps.print-digest.outputs.digest }}
 
     steps:
-      - run: |
+      - id: setup
+        run: |
           echo "runs-on = ${{ inputs.runs-on }}"
           echo "target = ${{ inputs.target }}"
+          echo ESCAPED_REF_NAME="$(echo '${{github.ref_name}}' | tr '/#' '-')" >> $GITHUB_OUTPUT
 
       - name: Checkout repository
         uses: actions/checkout@v6.0.0
@@ -60,6 +62,7 @@ jobs:
         env:
           is_push: ${{ github.event_name != 'pull_request' && (github.ref == 'refs/heads/main') }}
           BUILD_TIMESTAMP: ${{ inputs.build_timestamp }}
+          ESCAPED_REF_NAME: ${{ steps.setup.outputs.ESCAPED_REF_NAME }}
         uses: docker/bake-action@v6.9.0
         id: bake
         with:
@@ -68,6 +71,9 @@ jobs:
           targets: ${{ inputs.target }}
           set: |
             *.args.CRON_BUILDTIME='${{ inputs.build_timestamp }}'
+            *.cache-from=type=gha,scope=${{ env.ESCAPED_REF_NAME }}-${{ inputs.target }}
+            *.cache-to=type=gha,mode=max,scope=${{ env.ESCAPED_REF_NAME }}- ${{ inputs.target }}
+
 
       - name: Print digest
         id: print-digest
