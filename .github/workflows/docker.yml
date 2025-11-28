@@ -55,7 +55,7 @@ jobs:
       PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
     with:
       registry: ${{ needs.setup.outputs.registry }}
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-24.04-arm
       target: arm64
       build_timestamp: ${{ needs.setup.outputs.now }}
 
