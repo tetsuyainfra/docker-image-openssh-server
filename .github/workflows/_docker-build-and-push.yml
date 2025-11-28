@@ -40,9 +40,11 @@ jobs:
     steps:
       - id: setup
         run: |
+          ESCAPED_REF_NAME=$(echo '${{github.ref_name}}' | tr '/#' '-')
           echo "runs-on = ${{ inputs.runs-on }}"
           echo "target = ${{ inputs.target }}"
-          echo ESCAPED_REF_NAME="$(echo '${{github.ref_name}}' | tr '/#' '-')" >> $GITHUB_OUTPUT
+          echo "ESCAPED_REF_NAME = ${ESCAPED_REF_NAME}"
+          echo ESCAPED_REF_NAME="${ESCAPED_REF_NAME}" >> $GITHUB_OUTPUT
 
       - name: Checkout repository
         uses: actions/checkout@v6.0.0
