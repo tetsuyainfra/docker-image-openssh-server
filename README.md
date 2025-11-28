@@ -30,13 +30,13 @@ Logging
 # TODO
 - [ ] portainerなんかでpull-rebuildさせた時、/etc/\[shadow|group\]が無くなるのでinit_useraddなどのタイムスタンプファイルを/直下に置くことにする
   - [ ] group, userの簡易存在チェックをするのでいいのでは？
-- [ ] github actionsに対応させる
-  - [x] branch=main以外はbuildだけにする
-  - [x] 不要なTAGを削除するワークフローを作る -> やらなくてよくないか説でてきた
-  - [ ] 不要なcacheを削除するワークフローを作る
 - [ ] たまにmake runでビルドに失敗する理由を見つける -> わからん
+- [ ] もう少しドキュメントを充実させる
+- [x] variable "extra_tags" { default = [] }, tags = ["latest", ...var.extra_tags] をする → いらない
 - [x] RUN  --mount=type=cache,target=/var/cache/apt,sharing=locked してbuildキャッシュさせる
   - [x] /etc/apt/apt.conf.d/docker-clean を無効化(削除) する
   - [x] キャッシュ強制 echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
-- [x] variable "extra_tags" { default = [] }, tags = ["latest", ...var.extra_tags] をする → いらない
-- [ ] もう少しドキュメントを充実させる
+- [x] github actionsに対応させる
+  - [x] branch=main以外はbuildだけにする
+  - [x] 不要なTAGを削除するワークフローを作る -> やらなくてよくないか説でてきた
+  - [x] 不要なcacheを削除するワークフローを作る
