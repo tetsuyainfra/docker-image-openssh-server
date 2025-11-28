@@ -67,7 +67,7 @@ jobs:
           files: docker-bake.hcl
           targets: ${{ inputs.target }}
           set: |
-            target.${{ inputs.target }}.build-args.CRON_BUILDTIME='${{ inputs.build_timestamp }}'
+            *.args.CRON_BUILDTIME='${{ inputs.build_timestamp }}'
 
       - name: Print digest
         id: print-digest
