@@ -35,8 +35,7 @@ rm /etc/apt/apt.conf.d/docker-clean
 echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get full-upgrade -y
-DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        openssh-server xz-utils tzdata
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends openssh-server
 DEBIAN_FRONTEND=noninteractive apt-get remove --purge --auto-remove -y
 # Create manifest
 mkdir -p /usr/share/rocks
