@@ -26,7 +26,8 @@ RUN tar -C /rootfs/usr/local/bin -Jxpf /tmp/${JINJA_NAME} --strip-components=1 $
 # Main stage
 FROM debian:trixie-slim
 
-RUN  --mount=type=cache,target=/var/cache/apt,sharing=locked  <<EOF
+RUN  --mount=type=cache,target=/var/cache/apt,sharing=locked \
+     --mount=type=cache,target=/var/lib/apt,sharing=locked  <<EOF
 set -eux
 env
 # apt-get clean が動作しないようにする
