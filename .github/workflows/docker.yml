@@ -63,7 +63,7 @@ jobs:
     permissions:
       contents: read
       # packages: write # needs to push to GitHub Container Registry
-    needs: [build-amd64, build-arm64]
+    needs: [setup, build-amd64, build-arm64]
     runs-on: ubuntu-latest
     steps:
       - name: Log into registry ${{ env.REGISTRY }}
@@ -78,8 +78,11 @@ jobs:
         # Only push manifest on main branch not on PRs
         if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main')
         run: |
-          DATE_TAG=$(date +'%Y%m%d')
-
+          # dateutilsがなさそうなのでpythonで代用
+          # DATE_TAG=$(dateconv --format '%Y%m%d' --input-format '%Y-%m-%dT%H:%M:%S%Z' '${{ needs.setup.outputs.now }}')
+          DATE_TAG=$(
+            python3 -c 'print("".join(  "${{ needs.setup.outputs.now }}".split("T")[0].split("-")    ))
+          )
           AMD64_DIGEST=${{ needs.build-amd64.outputs.digest }}
           ARM64_DIGEST=${{ needs.build-arm64.outputs.digest }}
 
