@@ -14,11 +14,24 @@ else
     DEBUG_ON=0
 fi
 
+RETURN_CODE=1
 cleanup() {
+	RET=$?
+	[ $DEBUG_ON == 1 ] && echo "catch: EXIT signal. return code=$RET"
     echo "テストに使ったコンテナを削除します..."
 	docker stop $CONTAINER_NAME || true
+
+	exit $RET
 }
+# SIGINT（Ctrl+C）のハンドラ
+handle_sigint() {
+    echo "Caught SIGINT (Ctrl+C)"
+    exit 1
+}
+
 trap cleanup EXIT
+trap handle_sigint SIGINT
+
 
 set -e
 
