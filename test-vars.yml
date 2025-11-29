@@ -24,12 +24,15 @@ users:
     shell: /bin/bash  # option
 
 create_dirs:
+  # CHROOT DIR MUST BE OWNED BY ROOT AND NOT WRITABLE BY OTHER USERS
   - path: "/chroot/example2"
     owner: "root:root"
     mode: "755"
   - path: "/chroot/example2/data"
     owner: "example2"
     mode: "755"
+    chown_args: [--recursive, ]
+    chmod_args: [--recursive, ]
 
 # BE CAREFULL: In yaml yes or no means true or false, you should use 'yes' or 'no' as string
 sshd_config:
@@ -47,6 +50,7 @@ sshd_config:
   AllowTcpForwarding: 'no'
   Subsystems:
     # - 'sftp  /usr/lib/openssh/sftp-server'
+    # Using internal-sftp is for chroot
     - 'sftp    internal-sftp'
 
   AdditionalText: |

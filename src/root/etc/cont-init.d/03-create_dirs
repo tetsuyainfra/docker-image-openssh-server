@@ -1,0 +1,28 @@
+#!/command/with-contenv bash
+set -e
+
+if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "TRUE" ] || [ "$DEBUG" = "true" ]; then
+    DEBUG_ON=1
+    set -x
+else
+    DEBUG_ON=0
+fi
+
+CMD=(minijinja-cli -D DEBUG="${DEBUG}")
+
+if [ -n "${INIT_CONFIG:-}" ]; then
+    if [ -f "${INIT_CONFIG}" ]; then
+        CMD+=("/etc/templates/create_dirs.sh.j2" "${INIT_CONFIG}")
+    else
+        echo "WARNING: INIT_CONFIG is set but the file does not exist: ${INIT_CONFIG}"
+        exit 1
+    fi
+else
+    CMD+=(-D create_dirs:="${INIT_CREATE_DIRS}" "/etc/templates/create_dirs.sh.j2" )
+fi
+
+if [ "$DEBUG_ON" -eq 1 ]; then
+    "${CMD[@]}" | tee | bash -
+else
+    "${CMD[@]}" | bash -
+fi

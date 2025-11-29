@@ -1,0 +1,16 @@
+#!/bin/bash
+# create_dirs.sh.j2
+
+{%- if DEBUG in ['1', 'TRUE', 'true'] %}
+echo 'DEBUG       : {{ DEBUG }}'
+echo 'create_dirs : {{ create_dirs }}'
+set -x
+{%- endif %}
+
+
+# CREATE_DIRS
+{%- for d in create_dirs %}
+mkdir -p {{ d.path }}
+chown {{ d.chown_args | join(" ") }}  {{ d.owner }} {{ d.path }}
+chmod {{ d.chmod_args | join(" ") }}  {{ d.mode  }} {{ d.path }}
+{%- endfor %}

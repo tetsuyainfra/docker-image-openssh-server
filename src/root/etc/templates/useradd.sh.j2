@@ -1,6 +1,8 @@
+#!/bin/bash
+# useradd.sh.j2
 
 {%- if DEBUG in ['1', 'TRUE', 'true'] %}
-echo 'DEBUG       : {{ DEBUG }}'
+echo 'DEBUG  : {{ DEBUG }}'
 echo 'groups : {{ groups }}'
 echo 'users  : {{ users }}'
 set -x
@@ -9,32 +11,46 @@ set -x
 
 # GROUPS
 {%- for group in groups  %}
-groupadd --gid {{ group.gid }} {{ group.name }}
+if ! getent group {{ group.gid }} >/dev/null 2>&1; then
+    echo "Creating group {{ group.name }} with GID {{ group.gid }}"
+    groupadd --gid {{ group.gid }} {{ group.name }}
+else
+    echo "Group with GID {{ group.gid }} already exists. Skipping creation of   group {{ group.name }}."
+fi
 {%- endfor %}
 
 
 # USERS
 {%- for user in users  %}
-# {{ user.name }}
-useradd \
-    --uid {{ user.uid }}  \
-    --gid {{ user.gid }} \
-    --create-home \
-    --home-dir {{ user.home }} \
-    --shell {{ user.shell | default('/sbin/nologin') }} \
-    --skel "" \
-    {{ user.name }}
+if ! getent passwd {{ user.uid }} >/dev/null 2>&1; then
+    echo "Creating user {{ user.name }} with UID {{ user.uid }} GID {{ user.gid }}"
+    useradd \
+        --uid {{ user.uid }}  \
+        --gid {{ user.gid }} \
+        --create-home \
+        --home-dir {{ user.home }} \
+        --shell {{ user.shell | default('/sbin/nologin') }} \
+        --skel "" \
+        {{ user.name }}
+else
+    echo "User with UID {{ user.uid }} already exists. Skipping creation of user {{ user.name }}."
+fi
+
 
 {# none値の扱いに要注意 #}
 {%- if (user.password is defined) and ((user.password or "") | length > 0) %}
+set +x
+echo "Setting password for user {{ user.name }}"
 echo '{{ user.password }}' | passwd --stdin {{ user.name }}
+[ "$DEBUG_ON" -eq 1 ] && set -x
 {%- else %}
 # only useradd, account is locked. we should this carefully.
-passwd -u {{ user.name }}
+passwd --unlock {{ user.name }}
 {%- endif %}
+# MEMO: パスワードが無いと問答無用でアンロックされるのは問題か？要検討。
 
 {%- if user.authorized_keys %}
-mkdir {{ user.home }}/.ssh
+mkdir -p {{ user.home }}/.ssh
 cat <<EOF > {{ user.home }}/.ssh/authorized_keys
 {{ user.authorized_keys }}
 EOF
@@ -42,12 +58,4 @@ chown {{user.uid}}:{{user.gid}} {{ user.home }}/.ssh
 chmod 700 {{ user.home }}/.ssh
 chmod 644 {{ user.home }}/.ssh/authorized_keys
 {%- endif %}
-{%- endfor %}
-
-
-# CREATE_DIRS
-{%- for d in create_dirs %}
-mkdir -p {{ d.path }}
-chown {{ d.owner }} {{ d.path }}
-chmod {{ d.mode }}  {{ d.path }}
 {%- endfor %}

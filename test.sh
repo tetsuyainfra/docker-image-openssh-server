@@ -39,7 +39,6 @@ chmod  600 ./test_key_ed25519
 
 CONTAINER_NAME=$(docker run  \
 	--detach \
-	--rm \
 	-p 2222:$INIT_SSHD_PORT \
 	-e DEBUG=$DEBUG_ON \
 	-e INIT_GROUPS="$INIT_GROUPS" \
@@ -52,10 +51,11 @@ echo CONTAINER_NAME: $CONTAINER_NAME
 
 sleep 3
 
+function start_test() {
+
 {
 	echo TEST Check init_useradd, init_sshd_config created
 	docker exec $CONTAINER_NAME test -e /config
-	docker exec $CONTAINER_NAME test -e /config/init_useradd
 	docker exec $CONTAINER_NAME test -e /config/init_sshd_config
 }
 {
@@ -114,6 +114,21 @@ sleep 3
 	fi
 }
 
+} # end of start_test
+
+start_test
+echo "###### First run tests passed. #######"
+
+{
+	echo "Restarting container to verify persistence..."
+
+	docker stop $CONTAINER_NAME
+	docker restart $CONTAINER_NAME
+	sleep 3
+
+	start_test
+	echo "###### Restart tests passed. #######"
+}
 
 echo ""
 echo "###### All tests passed successfully. #######"

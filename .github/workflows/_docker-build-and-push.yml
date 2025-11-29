@@ -80,7 +80,7 @@ jobs:
         id: test
         run: |
           set -x
-          docker image ls
+          docker image inspect tetsuyainfra/openssh-server:trixie-${{ inputs.target }}-latest
           METADATA='${{ steps.before-bake.outputs.metadata }}'
           DIGEST=$(echo "$METADATA" | jq --raw-output '.${{ inputs.target }}["containerimage.digest"]')
           echo "Run tests here"

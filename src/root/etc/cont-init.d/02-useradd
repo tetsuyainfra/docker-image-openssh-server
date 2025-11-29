@@ -1,18 +1,11 @@
 #!/command/with-contenv bash
 set -e
-TIMESTAMP_FILE=/config/init_useradd
-
 if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "TRUE" ] || [ "$DEBUG" = "true" ]; then
     DEBUG_ON=1
     set -x
 else
     DEBUG_ON=0
 fi
-
-if [ -e $TIMESTAMP_FILE ]; then
-    exit 0
-fi
-touch $TIMESTAMP_FILE
 
 CMD=(minijinja-cli -D DEBUG="${DEBUG}")
 
