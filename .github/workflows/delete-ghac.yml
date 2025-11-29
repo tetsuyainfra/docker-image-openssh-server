@@ -1,6 +1,11 @@
-name: Delete Action Cache Manually
+name: Delete Action Cache Manually or on Branch Deletion
 on:
+  # branchが削除されたときにキャッシュを削除する
+  pull_request_target:
+    types: [closed]
+  # 手動トリガー
   workflow_dispatch:
+
 jobs:
   delete-cache:
     runs-on: ubuntu-latest
