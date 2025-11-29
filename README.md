@@ -35,10 +35,13 @@ Logging
     - -D は foregroudでの実行
 
 # TODO
-- [ ] portainerなんかでpull-rebuildさせた時、/etc/\[shadow|group\]が無くなるのでinit_useraddなどのタイムスタンプファイルを/直下に置くことにする
-  - [ ] group, userの簡易存在チェックをするのでいいのでは？
+- [ ] Slimにする
+  - [ ] apt-mark systemdでsystemdをインストールさせない
+  - [ ]   Depends: libgssapi-krb5-2 Depends: libkrb5-3 も削除してよいのでは？
 - [ ] たまにmake runでビルドに失敗する理由を見つける -> わからん
 - [ ] もう少しドキュメントを充実させる
+- [x] portainerなんかでpull-rebuildさせた時、/etc/\[shadow|group\]が無くなるのでinit_useraddなどのタイムスタンプファイルを/直下に置くことにする
+  - [x] group, userの簡易存在チェックをするのでいいのでは？
 - [x] variable "extra_tags" { default = [] }, tags = ["latest", ...var.extra_tags] をする → いらない
 - [x] RUN  --mount=type=cache,target=/var/cache/apt,sharing=locked してbuildキャッシュさせる
   - [x] /etc/apt/apt.conf.d/docker-clean を無効化(削除) する
