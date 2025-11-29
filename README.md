@@ -10,6 +10,13 @@ or [test.sh](test.sh#25)
 # HOW TO TEST
 ```make test```
 
+
+# Environment
+- docker
+- make
+- yq ( v4～ )
+
+
 # 動作について
 - 02-useradd : /etc/init_useradd をチェックして2度目の実行を予防している
 - 03-sshd_config : /etc/init_sshd_configをチェックして2度目の実行を予防している

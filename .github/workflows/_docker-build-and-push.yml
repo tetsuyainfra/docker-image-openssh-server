@@ -62,13 +62,13 @@ jobs:
 
       - name: Docker Buildx Bake
         env:
-          is_push: ${{ github.event_name != 'pull_request' && (github.ref == 'refs/heads/main') }}
           BUILD_TIMESTAMP: ${{ inputs.build_timestamp }}
           ESCAPED_REF_NAME: ${{ steps.setup.outputs.ESCAPED_REF_NAME }}
         uses: docker/bake-action@v6.9.0
-        id: bake
+        id: before-bake
         with:
-          push: ${{ env.is_push }}
+          push: false
+          load: true
           files: docker-bake.hcl
           targets: ${{ inputs.target }}
           set: |
@@ -76,6 +76,37 @@ jobs:
             *.cache-from=type=gha,scope=${{ env.ESCAPED_REF_NAME }}-${{ inputs.target }}
             *.cache-to=type=gha,mode=max,scope=${{ env.ESCAPED_REF_NAME }}-${{ inputs.target }}
 
+      - name: Test
+        id: test
+        run: |
+          set -x
+          docker image ls
+          METADATA='${{ steps.before-bake.outputs.metadata }}'
+          DIGEST=$(echo "$METADATA" | jq --raw-output '.${{ inputs.target }}["containerimage.digest"]')
+          echo "Run tests here"
+          IMAGE_NAME="tetsuyainfra/openssh-server:trixie-${{ inputs.target }}-latest" ./test.sh
+          RETVAL=$?
+          if [ $RETVAL -ne 0 ]; then
+            echo "Tests failed"
+            exit $RETVAL
+          fi
+          echo "Tests passed"
+
+      - name: Push to registry( ${{ inputs.registry }} )
+        id: bake
+        if:  success() && github.event_name != 'pull_request' && (github.ref == 'refs/heads/main')
+        uses: docker/bake-action@v6.9.0
+        env:
+          BUILD_TIMESTAMP: ${{ inputs.build_timestamp }}
+          ESCAPED_REF_NAME: ${{ steps.setup.outputs.ESCAPED_REF_NAME }}
+        with:
+          push: true
+          files: docker-bake.hcl
+          targets: ${{ inputs.target }}
+          set: |
+            *.args.CRON_BUILDTIME='${{ inputs.build_timestamp }}'
+            *.cache-from=type=gha,scope=${{ env.ESCAPED_REF_NAME }}-${{ inputs.target }}
+            *.cache-to=type=gha,mode=max,scope=${{ env.ESCAPED_REF_NAME }}-${{ inputs.target }}
 
       - name: Print digest
         id: print-digest

@@ -8,11 +8,14 @@ BUILD_IMAGE_NAME := tetsuyainfra/openssh-server:trixie-latest
 
 TEST_CONTAINER_NAME := ssh-server-testing
 
-TEST_INIT_GROUPS := $(shell yq -c .groups test-vars.yml)
-TEST_INIT_USERS := $(shell yq -c .users test-vars.yml)
-TEST_INIT_SSHD_PORT := $(shell yq -c .sshd_config.Port test-vars.yml)
-TEST_INIT_SSHD_CONFIG := $(shell yq -c .sshd_config test-vars.yml)
-TEST_INIT_CREATE_DIRS := $(shell yq -c '.create_dirs' test-vars.yml)
+# yq command options
+# --output json | -o json : output json format
+# --indent 0 | -I 0       : no pretty print)
+TEST_INIT_GROUPS := $(shell yq -I 0 -o json .groups test-vars.yml)
+TEST_INIT_USERS := $(shell yq -I 0 -o json .users test-vars.yml)
+TEST_INIT_SSHD_PORT := $(shell yq -I 0 -o json .sshd_config.Port test-vars.yml)
+TEST_INIT_SSHD_CONFIG := $(shell yq -I 0 -o json .sshd_config test-vars.yml)
+TEST_INIT_CREATE_DIRS := $(shell yq -I 0 -o json '.create_dirs' test-vars.yml)
 
 .PHONY: build
 ALL: build

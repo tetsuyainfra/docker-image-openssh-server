@@ -1,11 +1,11 @@
 #!/bin/bash
 
 IMAGE_NAME="${IMAGE_NAME:-tetsuyainfra/openssh-server:trixie-latest}"
-INIT_GROUPS=$(yq -c .groups test-vars.yml)
-INIT_USERS=$(yq -c .users test-vars.yml)
-INIT_CREATE_DIRS=$(yq -c '.create_dirs' test-vars.yml)
-INIT_SSHD_PORT=$(yq -c .sshd_config.Port test-vars.yml)
-INIT_SSHD_CONFIG=$(yq -c .sshd_config test-vars.yml)
+INIT_GROUPS=$(yq -I 0 -o json .groups test-vars.yml)
+INIT_USERS=$(yq -I 0 -o json .users test-vars.yml)
+INIT_CREATE_DIRS=$(yq -I 0 -o json '.create_dirs' test-vars.yml)
+INIT_SSHD_PORT=$(yq -I 0 -o json .sshd_config.Port test-vars.yml)
+INIT_SSHD_CONFIG=$(yq -I 0 -o json .sshd_config test-vars.yml)
 
 if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "TRUE" ] || [ "$DEBUG" = "true" ]; then
     DEBUG_ON=1
@@ -34,6 +34,8 @@ trap handle_sigint SIGINT
 
 
 set -e
+
+chmod  600 ./test_key_ed25519
 
 CONTAINER_NAME=$(docker run  \
 	--detach \
