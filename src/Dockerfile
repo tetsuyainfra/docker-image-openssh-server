@@ -38,6 +38,7 @@ rm /etc/apt/apt.conf.d/docker-clean
 # キャッシュの保持を強制
 echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 apt-get update
+apt-mark hold systemd
 DEBIAN_FRONTEND=noninteractive apt-get full-upgrade -y
 DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends openssh-server
 DEBIAN_FRONTEND=noninteractive apt-get remove --purge --auto-remove -y
