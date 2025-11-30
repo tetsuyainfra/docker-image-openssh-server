@@ -135,7 +135,7 @@ echo "###### First run tests passed. #######"
 		#   chmod_args: [--recursive, ]
 		#   ---> chmod --recursive 755 /chroot/example2/data
 		echo "Verifyining /chroot/example2/data/README.md is 755 after restart"
-		mode=$(stat '%a' ./tmp/README_copied.md)
+		mode=$(stat -c '%a' ./tmp/README_copied.md)
 		echo "Mode of /chroot/example2/data/README.md: ${mode}"
 		if [ "${mode}" != "755" ]; then
 		  echo "/chroot/example2/data/README.md mode is not 755 after restart"
