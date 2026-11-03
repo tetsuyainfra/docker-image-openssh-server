@@ -46,7 +46,7 @@ jobs:
           echo ESCAPED_REF_NAME="${ESCAPED_REF_NAME}" >> $GITHUB_OUTPUT
 
       - name: Checkout repository
-        uses: actions/checkout@v6.0.0
+        uses: actions/checkout@v7.0.1
 
       - name: Log into registry ${{ inputs.registry }}
         if: github.event_name != 'pull_request'
