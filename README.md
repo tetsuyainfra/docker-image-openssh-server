@@ -35,9 +35,6 @@ Logging
     - -D は foregroudでの実行
 
 # TODO
-- [x] Slimにする
-  - [x] apt-mark systemdでsystemdをインストールさせない
-  - [x]   Depends: libgssapi-krb5-2 Depends: libkrb5-3 も削除してよいのでは？
 - [ ] たまにmake runでビルドに失敗する理由を見つける -> わからん
 - [ ] もう少しドキュメントを充実させる
 - [x] portainerなんかでpull-rebuildさせた時、/etc/\[shadow|group\]が無くなるのでinit_useraddなどのタイムスタンプファイルを/直下に置くことにする
