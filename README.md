@@ -35,9 +35,9 @@ Logging
     - -D は foregroudでの実行
 
 # TODO
-- [ ] Slimにする
-  - [ ] apt-mark systemdでsystemdをインストールさせない
-  - [ ]   Depends: libgssapi-krb5-2 Depends: libkrb5-3 も削除してよいのでは？
+- [x] Slimにする
+  - [x] apt-mark systemdでsystemdをインストールさせない
+  - [x]   Depends: libgssapi-krb5-2 Depends: libkrb5-3 も削除してよいのでは？
 - [ ] たまにmake runでビルドに失敗する理由を見つける -> わからん
 - [ ] もう少しドキュメントを充実させる
 - [x] portainerなんかでpull-rebuildさせた時、/etc/\[shadow|group\]が無くなるのでinit_useraddなどのタイムスタンプファイルを/直下に置くことにする
@@ -50,3 +50,6 @@ Logging
   - [x] branch=main以外はbuildだけにする
   - [x] 不要なTAGを削除するワークフローを作る -> やらなくてよくないか説でてきた
   - [x] 不要なcacheを削除するワークフローを作る
+- Debian14
+  - [ ] openssh-server-gssapiにパッケージが分離されてlibgssapiをインストールしないことが可能になる
+    https://www.debian.org/releases/trixie/release-notes/issues.ja.html#:~:text=it%20starting%20with%20forky
