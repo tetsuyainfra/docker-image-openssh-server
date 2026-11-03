@@ -63,7 +63,7 @@ jobs:
         env:
           BUILD_TIMESTAMP: ${{ inputs.build_timestamp }}
           ESCAPED_REF_NAME: ${{ steps.setup.outputs.ESCAPED_REF_NAME }}
-        uses: docker/bake-action@v6.9.0
+        uses: docker/bake-action@v7.5.0
         id: before-bake
         with:
           push: false
@@ -94,7 +94,7 @@ jobs:
       - name: Push to registry( ${{ inputs.registry }} )
         id: bake
         if: success() && github.event_name != 'pull_request' && (github.ref == 'refs/heads/main')
-        uses: docker/bake-action@v6.9.0
+        uses: docker/bake-action@v7.5.0
         env:
           BUILD_TIMESTAMP: ${{ inputs.build_timestamp }}
           ESCAPED_REF_NAME: ${{ steps.setup.outputs.ESCAPED_REF_NAME }}
