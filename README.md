@@ -35,10 +35,10 @@ Logging
     - -D は foregroudでの実行
 
 # TODO
-- [ ] portainerなんかでpull-rebuildさせた時、/etc/\[shadow|group\]が無くなるのでinit_useraddなどのタイムスタンプファイルを/直下に置くことにする
-  - [ ] group, userの簡易存在チェックをするのでいいのでは？
 - [ ] たまにmake runでビルドに失敗する理由を見つける -> わからん
 - [ ] もう少しドキュメントを充実させる
+- [x] portainerなんかでpull-rebuildさせた時、/etc/\[shadow|group\]が無くなるのでinit_useraddなどのタイムスタンプファイルを/直下に置くことにする
+  - [x] group, userの簡易存在チェックをするのでいいのでは？
 - [x] variable "extra_tags" { default = [] }, tags = ["latest", ...var.extra_tags] をする → いらない
 - [x] RUN  --mount=type=cache,target=/var/cache/apt,sharing=locked してbuildキャッシュさせる
   - [x] /etc/apt/apt.conf.d/docker-clean を無効化(削除) する
@@ -47,3 +47,6 @@ Logging
   - [x] branch=main以外はbuildだけにする
   - [x] 不要なTAGを削除するワークフローを作る -> やらなくてよくないか説でてきた
   - [x] 不要なcacheを削除するワークフローを作る
+- Debian14
+  - [ ] openssh-server-gssapiにパッケージが分離されてlibgssapiをインストールしないことが可能になる
+    https://www.debian.org/releases/trixie/release-notes/issues.ja.html#:~:text=it%20starting%20with%20forky
